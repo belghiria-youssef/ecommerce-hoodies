@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Produit | Urban Threads</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #239b7e;
+            --secondary-color: #1f1e1e;
+            --accent-color: #f5f5f5;
+            --text-dark: #333;
+            --text-light: #716d6d;
+            --text-white: #fff;
+            --font-heading: 'Playfair Display SC', serif;
+            --font-body: 'Roboto', sans-serif;
+            --transition: all 0.3s ease;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: #f9f9f9;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--secondary-color);
+            color: var(--text-white);
+            padding: 20px 0;
+            transition: var(--transition);
+            position: fixed;
+            height: 100%;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--text-white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-logo i {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            margin-top: 30px;
+        }
+
+        .menu-title {
+            padding: 0 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #bbb;
+            margin-bottom: 15px;
+        }
+
+        .menu-item {
+            margin-bottom: 5px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #bbb;
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-white);
+            border-left-color: var(--primary-color);
+        }
+
+        .menu-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-link.active i {
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--text-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification i {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--primary-color);
+            color: var(--text-white);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-weight: bold;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--text-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-white);
+            font-size: 1.2rem;
+        }
+
+        .card-icon.sales {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-icon.orders {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .card-icon.products {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .card-icon.customers {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-growth {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .growth-up {
+            color: #43e97b;
+        }
+
+        .growth-down {
+            color: #f5576c;
+        }
+
+        /* Charts Section */
+        .charts {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: var(--text-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .chart-actions select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+
+        /* Recent Orders */
+        .recent-orders {
+            background: var(--text-white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .orders-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #f9f9f9;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .orders-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-processing {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .view-btn {
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .view-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                overflow: hidden;
+            }
+            
+            .sidebar-logo span, .menu-title, .menu-link span {
+                display: none;
+            }
+            
+            .menu-link {
+                justify-content: center;
+                padding: 12px 0;
+                border-left: none;
+                border-right: 3px solid transparent;
+            }
+            
+            .menu-link:hover, .menu-link.active {
+                border-left: none;
+                border-right-color: var(--primary-color);
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .search-bar {
+                width: 200px;
+            }
+            
+            .charts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .user-name {
+                display: none;
+            }
+            
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                width: 150px;
+            }
+        }
+        .form-container {
+            background: var(--text-white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .form-header {
+            margin-bottom: 30px;
+        }
+        
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        
+        .form-subtitle {
+            color: var(--text-light);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group.required label::after {
+            content: '*';
+            color: #f5576c;
+            margin-left: 5px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .image-upload i {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .image-upload p {
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .image-upload small {
+            color: #bbb;
+        }
+        
+        .preview-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .preview-image {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 0, 0, 0.7);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .variants-container {
+            margin-top: 30px;
+        }
+        
+        .variant-item {
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .variant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .variant-title {
+            font-weight: 600;
+        }
+        
+        .remove-variant {
+            color: #f5576c;
+            cursor: pointer;
+        }
+        
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+     <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="sidebar-logo">
+                    <i class="fas fa-tshirt"></i>
+                    <span>URBAN THREADS</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <div class="menu-title">Menu</div>
+                <ul>
+                    <li class="menu-item">
+                        <a href="dashboard.html" class="menu-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="product.html" class="menu-link active">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span>Produits</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="orders.html" class="menu-link">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Commandes</span>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="customers.html" class="menu-link">
+                            <i class="fas fa-users"></i>
+                            <span>Clients</span>
+                        </a>
+                    </li>
+
+                </ul>
+                
+                
+            </nav>
+        </aside>
+        
+         <main class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Rechercher...">
+                </div>
+                
+                <div class="user-actions">
+                    <div class="notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </div>
+                    
+                    <div class="user-profile">
+                        <div class="user-avatar">AD</div>
+                        <span class="user-name">Admin</span>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Add Product Content -->
+            <div class="form-container">
+                <div class="form-header">
+                    <h2 class="form-title">Ajouter un nouveau produit</h2>
+                    <p class="form-subtitle">Remplissez les informations ci-dessous pour ajouter un nouveau produit à votre boutique</p>
+                </div>
+                
+                <form action="save-product.php" method="POST" enctype="multipart/form-data">
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="product-name">Nom du produit</label>
+                            <input type="text" id="product-name" name="name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group required">
+                            <label for="product-reference">Référence</label>
+                            <input type="text" id="product-reference" name="reference" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="product-price">Prix (DH)</label>
+                            <input type="number" id="product-price" name="price" class="form-control" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-compare-price">Prix comparatif (DH)</label>
+                            <input type="number" id="product-compare-price" name="compare_price" class="form-control" step="0.01" min="0">
+                        </div>
+                        
+                        <div class="form-group required">
+                            <label for="product-quantity">Quantité en stock</label>
+                            <input type="number" id="product-quantity" name="quantity" class="form-control" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group required">
+                        <label for="product-description">Description</label>
+                        <textarea id="product-description" name="description" class="form-control" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group required">
+                            <label for="product-category">Catégorie</label>
+                            <select id="product-category" name="category" class="form-control" required>
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="homme">Homme</option>
+                                <option value="femme">Femme</option>
+                                <option value="enfant">Enfant</option>
+                                <option value="accessoires">Accessoires</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="product-collection">Collection</label>
+                            <select id="product-collection" name="collection" class="form-control">
+                                <option value="">Aucune collection</option>
+                                <option value="ete">Été 2023</option>
+                                <option value="limited">Édition limitée</option>
+                                <option value="basique">Basique</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group required">
+                            <label for="product-status">Statut</label>
+                            <select id="product-status" name="status" class="form-control" required>
+                                <option value="active">Actif</option>
+                                <option value="draft">Brouillon</option>
+                                <option value="archived">Archivé</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group required">
+                        <label>Images du produit</label>
+                        <div class="image-upload" id="image-upload">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Glissez-déposez vos images ici ou cliquez pour parcourir</p>
+                            <small>Formats supportés: JPG, PNG, GIF. Taille max: 5MB</small>
+                            <input type="file" id="product-images" name="images[]" multiple style="display: none;">
+                        </div>
+                        <div class="preview-images" id="preview-images"></div>
+                    </div>
+                    
+                    <div class="variants-container">
+                        <h3>Variantes</h3>
+                        <p style="color: var(--text-light); margin-bottom: 15px;">Ajoutez des variantes de couleur et de taille pour ce produit</p>
+                        
+                        <div class="variant-item">
+                            <div class="variant-header">
+                                <div class="variant-title">Variante #1</div>
+                                <div class="remove-variant">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="variant-color">Couleur</label>
+                                    <select id="variant-color" name="variants[0][color]" class="form-control">
+                                        <option value="">Sélectionner une couleur</option>
+                                        <option value="red">Rouge</option>
+                                        <option value="black">Noir</option>
+                                        <option value="blue">Bleu</option>
+                                        <option value="green">Vert</option>
+                                        <option value="white">Blanc</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="variant-size">Taille</label>
+                                    <select id="variant-size" name="variants[0][size]" class="form-control">
+                                        <option value="">Sélectionner une taille</option>
+                                        <option value="S">S</option>
+                                        <option value="M">M</option>
+                                        <option value="L">L</option>
+                                        <option value="XL">XL</option>
+                                        <option value="XXL">XXL</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="variant-price">Prix supplémentaire (DH)</label>
+                                    <input type="number" id="variant-price" name="variants[0][price]" class="form-control" step="0.01" min="0">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="variant-quantity">Quantité</label>
+                                    <input type="number" id="variant-quantity" name="variants[0][quantity]" class="form-control" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" id="add-variant" class="btn btn-outline">
+                            <i class="fas fa-plus"></i> Ajouter une variante
+                        </button>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Enregistrer le produit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // Initialize Select2
+        $(document).ready(function() {
+            $('#product-category, #product-collection, #variant-color, #variant-size').select2();
+            
+            // Image upload preview
+            $('#image-upload').click(function() {
+                $('#product-images').click();
+            });
+            
+            $('#product-images').change(function() {
+                const files = this.files;
+                const previewContainer = $('#preview-images');
+                previewContainer.empty();
+                
+                if (files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            previewContainer.append(`
+                                <div class="preview-image">
+                                    <img src="${e.target.result}" alt="Preview">
+                                    <div class="remove-image">
+                                        <i class="fas fa-times"></i>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                        
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+            
+            // Add variant
+            let variantCount = 1;
+            $('#add-variant').click(function() {
+                variantCount++;
+                $('.variants-container').append(`
+                    <div class="variant-item">
+                        <div class="variant-header">
+                            <div class="variant-title">Variante #${variantCount}</div>
+                            <div class="remove-variant">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="variant-color-${variantCount}">Couleur</label>
+                                <select id="variant-color-${variantCount}" name="variants[${variantCount-1}][color]" class="form-control">
+                                    <option value="">Sélectionner une couleur</option>
+                                    <option value="red">Rouge</option>
+                                    <option value="black">Noir</option>
+                                    <option value="blue">Bleu</option>
+                                    <option value="green">Vert</option>
+                                    <option value="white">Blanc</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="variant-size-${variantCount}">Taille</label>
+                                <select id="variant-size-${variantCount}" name="variants[${variantCount-1}][size]" class="form-control">
+                                    <option value="">Sélectionner une taille</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                    <option value="XXL">XXL</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="variant-price-${variantCount}">Prix supplémentaire (DH)</label>
+                                <input type="number" id="variant-price-${variantCount}" name="variants[${variantCount-1}][price]" class="form-control" step="0.01" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="variant-quantity-${variantCount}">Quantité</label>
+                                <input type="number" id="variant-quantity-${variantCount}" name="variants[${variantCount-1}][quantity]" class="form-control" min="0">
+                            </div>
+                        </div>
+                    </div>
+                `);
+                
+                $(`#variant-color-${variantCount}, #variant-size-${variantCount}`).select2();
+            });
+            
+            // Remove variant
+            $(document).on('click', '.remove-variant', function() {
+                if ($('.variant-item').length > 1) {
+                    $(this).closest('.variant-item').remove();
+                    // Reindex variants
+                    $('.variant-item').each(function(index) {
+                        $(this).find('.variant-title').text(`Variante #${index+1}`);
+                    });
+                } else {
+                    alert('Vous devez avoir au moins une variante.');
+                }
+            });
+            
+            // Remove image
+            $(document).on('click', '.remove-image', function() {
+                $(this).closest('.preview-image').remove();
+            });
+        });
+    </script>
+</body>
+</html>
